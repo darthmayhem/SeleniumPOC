@@ -14,16 +14,17 @@ chrome.setDefaultService(service);
 
 test.describe('Google Search', function() {
     test.it('should work', function(done) {
-        var driver = new webdriver.Builder().
-        withCapabilities(webdriver.Capabilities.chrome()).
-        build();
+        var driver = new webdriver.Builder()
+            .withCapabilities(webdriver.Capabilities.chrome())
+            .build();
         driver.get('http://www.google.com');
         var searchBox = driver.findElement(webdriver.By.name('q'));
         searchBox.sendKeys('simple programmer');
-        searchBox.getAttribute('value').then(function(value) {
-            expect(value).to.equal('simple programmer');
-            done();
-        });
+        searchBox.getAttribute('value')
+            .then(function(value) {
+                expect(value).to.equal('simple programmer');
+                done();
+            });
         driver.quit();
     });
 });
