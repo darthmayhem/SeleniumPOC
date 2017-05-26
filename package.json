@@ -2,7 +2,6 @@
   "name": "selenium-poc",
   "version": "0.0.1",
   "description": "A proof of concept using selenium to automate browser testing",
-  "main": "index.js",
   "scripts": {
     "test:spec": "mocha --timeout 15000 --reporter spec tests/**/*.spec.js",
     "test:json": "mocha --timeout 15000 --reporter json tests/**/*.spec.js"

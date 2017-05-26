@@ -10,7 +10,7 @@ run `npm install` to install and packages
 
 # Running tests
 
-the tests can be run by the follwoing:
+the tests can be run by one of the following:
 
 Spec results: `npm run test:spec`
 
