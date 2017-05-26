@@ -1,0 +1,23 @@
+{
+  "name": "selenium-poc",
+  "version": "0.0.1",
+  "description": "A proof of concept using selenium to automate browser testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darthmayhem/SeleniumPOC.git"
+  },
+  "author": "Steve Haight",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/darthmayhem/SeleniumPOC/issues"
+  },
+  "homepage": "https://github.com/darthmayhem/SeleniumPOC.git#readme",
+  "devDependencies": {
+    "chromedriver": "^2.29.0",
+    "selenium-webdriver": "^3.4.0"
+  }
+}
