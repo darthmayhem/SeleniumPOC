@@ -4,7 +4,8 @@
   "description": "A proof of concept using selenium to automate browser testing",
   "main": "index.js",
   "scripts": {
-    "test": "exit 1"
+    "test:spec": "mocha --timeout 15000 --reporter spec tests/**/*.spec.js",
+    "test:json": "mocha --timeout 15000 --reporter json tests/**/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,9 @@
   },
   "homepage": "https://github.com/darthmayhem/SeleniumPOC.git#readme",
   "devDependencies": {
+    "chai": "^4.0.0",
     "chromedriver": "^2.29.0",
+    "mocha": "^3.4.2",
     "selenium-webdriver": "^3.4.0"
   }
 }
