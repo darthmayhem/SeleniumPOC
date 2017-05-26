@@ -2,7 +2,7 @@
 An adventure in setting up and running selenium web browser automation
 
 
-# Dependancies
+# Dependencies
 
 ### Package installations
 
