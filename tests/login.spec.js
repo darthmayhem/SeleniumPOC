@@ -22,6 +22,7 @@ test.describe('Login', function() {
         driver = new webdriver.Builder()
             .withCapabilities(webdriver.Capabilities.chrome())
             .build();
+        driver.manage().deleteAllCookies();
     });
 
     test.afterEach(function(){
@@ -39,16 +40,12 @@ test.describe('Login', function() {
         driver.findElement(By.css('button.btn.btn-default.btn-login'))
             .click();
 
-        driver.wait(function(){
-            return driver.findElement(By.css('div.login-error-message')).then(function(element) {
-                    expect(element).to.exist;
-                    done();
-                    return true;
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
+        driver.wait(until.elementLocated(By.css('div.login-error-message')), 5000);
+        driver.findElement(By.css('div.login-error-message')).then(function(element) {
+            expect(element).to.exist;
+            done();
+            return true;
+        });
     });
 
     test.it('should display agreement disclaimer with correct credentials', function(done) {
@@ -62,14 +59,7 @@ test.describe('Login', function() {
         driver.findElement(By.css('button.btn.btn-default.btn-login'))
             .click();
 
-        driver.wait(function(){
-            return driver.findElement(By.css('div.modal')).then(function(element) {
-                return true;
-            },
-            function (error){
-                return false;
-            });
-        }, 5000);
+        driver.wait(until.elementLocated(By.css('div.modal')), 5000);
 
         driver.findElement(By.css('h4.modal-title')).then(function(element) {
             expect(element).to.exist;

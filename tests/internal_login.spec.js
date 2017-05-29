@@ -15,6 +15,30 @@ chrome.setDefaultService(service);
 var By = webdriver.By;
 var until = webdriver.until;
 
+function verifyUserName(driver, username, done){
+    // login user
+    driver.findElement(By.css('button.btn.btn-default.btn-login'))
+        .click();
+
+    driver.wait(until.elementLocated(By.css('button.btn.btn-success.agree')), 5000);
+
+    driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
+        driver.wait(until.elementIsVisible(element), 1000);
+        element.click();
+
+        driver.wait(until.elementLocated(By.css('.navbar-right label')), 5000);
+
+        // verify proper username is displayed
+        driver.findElement(By.css('.navbar-right label')).then(function(element) {
+            driver.wait(until.elementIsVisible(element), 1000);
+            element.getText().then(function(text){
+                expect(text.indexOf(username) >= 0).to.be.true;
+                done();
+            });
+        });
+    });
+}
+
 test.describe('Internal Login', function() {
     var driver;
 
@@ -22,59 +46,11 @@ test.describe('Internal Login', function() {
         driver = new webdriver.Builder()
             .withCapabilities(webdriver.Capabilities.chrome())
             .build();
+        driver.manage().deleteAllCookies();
     });
 
     test.afterEach(function(){
         driver.quit();
-    });
-
-    test.it('proper login for a50wadmin user', function(done) {
-        driver.get('https://onestopuat.aer.ca/onestop/');
-
-        driver.findElement(By.name('username'))
-            .sendKeys('a50wadmin');
-        driver.findElement(By.name('password'))
-            .sendKeys('Nala2017');
-
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('A50wAdmin') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
     });
 
     test.it('proper login for Readonly user', function(done) {
@@ -85,45 +61,7 @@ test.describe('Internal Login', function() {
         driver.findElement(By.name('password'))
             .sendKeys('Nala@2017');
 
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('Pipeline ReadOnly') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
+        verifyUserName(driver, 'Pipeline ReadOnly', done);
     });
 
     test.it('proper login for All Roles user', function(done) {
@@ -134,45 +72,7 @@ test.describe('Internal Login', function() {
         driver.findElement(By.name('password'))
             .sendKeys('Nala@2017');
 
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('Pipeline SuperUser') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
+        verifyUserName(driver, 'Pipeline SuperUser', done);
     });
 
     test.it('proper login for Pipeline-Auditor user', function(done) {
@@ -183,45 +83,7 @@ test.describe('Internal Login', function() {
         driver.findElement(By.name('password'))
             .sendKeys('Nala@2017');
 
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('Pipeline Auditor') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
+        verifyUserName(driver, 'Pipeline Auditor', done);
     });
 
     test.it('proper login for Pipeline-Business Administrator user', function(done) {
@@ -232,45 +94,7 @@ test.describe('Internal Login', function() {
         driver.findElement(By.name('password'))
             .sendKeys('Nala@2017');
 
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('Pipeline BusinessAdministrator') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
+        verifyUserName(driver, 'Pipeline BusinessAdministrator', done);
     });
 
     test.it('proper login for Pipeline-Coordinator user', function(done) {
@@ -281,45 +105,7 @@ test.describe('Internal Login', function() {
         driver.findElement(By.name('password'))
             .sendKeys('Nala@2017');
 
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('Pipeline Coordinator') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
+        verifyUserName(driver, 'Pipeline Coordinator', done);
     });
 
     test.it('proper login for Pipeline-Decision Maker user', function(done) {
@@ -330,45 +116,7 @@ test.describe('Internal Login', function() {
         driver.findElement(By.name('password'))
             .sendKeys('Nala@2017');
 
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('Pipeline DecisionMaker') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
+        verifyUserName(driver, 'Pipeline DecisionMaker', done);
     });
 
     test.it('proper login for Pipeline-Lead Reviewer user', function(done) {
@@ -379,45 +127,7 @@ test.describe('Internal Login', function() {
         driver.findElement(By.name('password'))
             .sendKeys('Nala@2017');
 
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('Pipeline LeadReviewer') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
+        verifyUserName(driver, 'Pipeline LeadReviewer', done);
     });
 
     test.it('proper login for Pipeline-Reviewer user', function(done) {
@@ -428,45 +138,7 @@ test.describe('Internal Login', function() {
         driver.findElement(By.name('password'))
             .sendKeys('Nala@2017');
 
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('Pipeline Reviewer') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
+        verifyUserName(driver, 'Pipeline Reviewer', done);
     });
 
     test.it('proper login for Pipeline-Readonly user', function(done) {
@@ -477,93 +149,6 @@ test.describe('Internal Login', function() {
         driver.findElement(By.name('password'))
             .sendKeys('Nala@2017');
 
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('Pipeline ReadOnly') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
-    });
-
-    test.it('proper login for Pipeline - Super USER user', function(done) {
-        driver.get('https://onestopuat.aer.ca/onestop/');
-
-        driver.findElement(By.name('username'))
-            .sendKeys('CBPLSU');
-        driver.findElement(By.name('password'))
-            .sendKeys('Nala@2017');
-
-        // login user
-        driver.findElement(By.css('button.btn.btn-default.btn-login'))
-            .click();
-
-        // wait for login response
-        driver.wait(function(){
-            return driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-                    return element.isDisplayed().then(function(resp){
-                        return resp;
-                    });
-                },
-                function (error){
-                    return false;
-                });
-        }, 5000);
-
-        driver.findElement(By.css('button.btn.btn-success.agree')).then(function(element) {
-            element.click();
-
-            // wait for page load
-            driver.wait(function(){
-                return driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                        return element.isDisplayed().then(function(resp){
-                            return resp;
-                        });
-                    },
-                    function (error){
-                        return false;
-                    });
-            }, 5000);
-
-            // verify proper username is displayed
-            driver.findElement(By.css('.navbar-right label')).then(function(element) {
-                element.getText().then(function(text){
-                    expect(text.indexOf('Pipeline SuperUser') >= 0).to.be.true;
-                    done();
-                });
-            });
-        });
+        verifyUserName(driver, 'Pipeline ReadOnly', done);
     });
 });
