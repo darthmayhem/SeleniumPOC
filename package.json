@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "A proof of concept using selenium to automate browser testing",
   "scripts": {
-    "test:spec": "mocha --timeout 5000 --reporter spec tests/**/*.spec.js",
-    "test:json": "mocha --timeout 5000 --reporter json tests/**/*.spec.js"
+    "test:spec": "mocha --timeout 15000 --reporter spec tests/**/*.spec.js",
+    "test:json": "mocha --timeout 15000 --reporter json tests/**/*.spec.js"
   },
   "repository": {
     "type": "git",
