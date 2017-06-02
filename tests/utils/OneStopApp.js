@@ -68,9 +68,40 @@ function setSelectFieldValue (fieldName, txtValue) {
     });
 }
 
+function setRadioFieldIndex (fieldName, index) {
+    driver.wait(until.elementLocated(By.name(fieldName)), waitLong);
+    driver.findElements(By.name(fieldName)).then(function(elements){
+        driver.wait(until.elementIsVisible(elements[index]), waitShort);
+        elements[index].findElement(By.xpath('..')).then(function(element){
+            element.click();
+        });
+    });
+}
+
+function setCheckbox (fieldName) {
+    driver.wait(until.elementLocated(By.name(fieldName)), waitLong);
+    driver.findElement(By.name(fieldName)).then(function(element){
+        driver.wait(until.elementIsVisible(element), waitShort);
+        element.findElement(By.xpath('..')).then(function(element){
+            element.click();
+        });
+    });
+}
+
 function getElementValueByCSS(elementCSS){
     driver.wait(until.elementLocated(By.css(elementCSS)), waitLong);
     return driver.findElement(By.css(elementCSS)).getText();
+}
+
+function nextPage(pageCount){
+
+    for (var i=0; i<pageCount; i++){
+        //Give the page a moment to draw
+        driver.sleep(3000);
+
+        // move to the next screen
+        clickButton('.btn.btn-primary.btn-next');
+    }
 }
 
 function clickButton(buttonCss){
@@ -102,6 +133,54 @@ function createApplication(done){
         })
 }
 
+function addApplicationInformation(done){
+    // Go to the new application page
+    driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
+
+    nextPage(1);
+
+    // Set the integrationChoice toggle to no
+    setRadioFieldIndex('integrationChoice', 1);
+
+    // Set the applicant email
+    setTextFieldValue('newIntegrationReferenceName', 'Automated Test Project');
+
+    // Set the existingApprovals toggle to no
+    setRadioFieldIndex('existingApprovals', 1);
+
+    // Save the application
+    clickButton('.btn.btn-success.btn-save');
+
+    //Give the page a moment to save
+    driver.sleep(waitShort);
+
+    done();
+}
+
+function addProposedActivity(done){
+    // Go to the new application page
+    driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
+
+    nextPage(2);
+
+    // Check Private Land
+    setCheckbox('privateLand');
+
+    // Check Pipelines
+    setCheckbox('proposedPipelinesActivity');
+
+    // Set the developmentType toggle to Oil and Gas
+    setRadioFieldIndex('developmentType', 2);
+
+    // Save the application
+    clickButton('.btn.btn-success.btn-save');
+
+    //Give the page a moment to save
+    driver.sleep(waitShort);
+
+    done();
+}
+
 function deleteApplication(done){
     // Go to the draft application
     driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
@@ -128,7 +207,12 @@ module.exports = {
     login: login,
     setTextFieldValue: setTextFieldValue,
     setSelectFieldValue: setSelectFieldValue,
+    setRadioFieldIndex: setRadioFieldIndex,
+    setCheckbox: setCheckbox,
+    nextPage: nextPage,
     clickButton: clickButton,
     createApplication: createApplication,
+    addApplicationInformation: addApplicationInformation,
+    addProposedActivity: addProposedActivity,
     deleteApplication: deleteApplication
 };
