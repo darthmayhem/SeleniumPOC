@@ -97,7 +97,7 @@ function nextPage(pageCount){
 
     for (var i=0; i<pageCount; i++){
         //Give the page a moment to draw
-        driver.sleep(3000);
+        driver.sleep(waitShort);
 
         // move to the next screen
         clickButton('.btn.btn-primary.btn-next');
@@ -107,7 +107,7 @@ function nextPage(pageCount){
 function clickButton(buttonCss){
     driver.wait(until.elementLocated(By.css(buttonCss)), waitLong);
     driver.findElement(By.css(buttonCss)).then(function(element){
-        driver.wait(until.elementIsVisible(element), waitShort);
+        driver.wait(until.elementIsVisible(element), waitLong);
         element.click();
     });
 }
@@ -125,6 +125,9 @@ function createApplication(done){
     // Save the application
     clickButton('.btn.btn-success.btn-save');
 
+    // slight pause for page load
+    driver.sleep(waitShort);
+
     // Set the application Id in object
     getElementValueByCSS('#subheader-level-two')
         .then(function(value){
@@ -136,7 +139,6 @@ function createApplication(done){
 function addApplicationInformation(done){
     // Go to the new application page
     driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
-
     nextPage(1);
 
     // Set the integrationChoice toggle to no
@@ -160,7 +162,6 @@ function addApplicationInformation(done){
 function addProposedActivity(done){
     // Go to the new application page
     driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
-
     nextPage(2);
 
     // Check Private Land
@@ -171,6 +172,66 @@ function addProposedActivity(done){
 
     // Set the developmentType toggle to Oil and Gas
     setRadioFieldIndex('developmentType', 2);
+
+    // Save the application
+    clickButton('.btn.btn-success.btn-save');
+
+    //Give the page a moment to save
+    driver.sleep(waitShort);
+
+    done();
+}
+
+function addAdditionalInformation(done){
+    // Go to the new application page
+    driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
+    nextPage(3);
+
+    // Set the stakeholderConcerns toggle to No
+    setRadioFieldIndex('stakeholderConcerns', 1);
+
+    // Set the epeaApproval toggle to No
+    setRadioFieldIndex('epeaApproval', 1);
+
+    // Set the waterActNotificationSubmitted toggle to No
+    setRadioFieldIndex('waterActNotificationSubmitted', 1);
+
+    // Set the waterActApprovalRequired toggle to No
+    setRadioFieldIndex('waterActApprovalRequired', 1);
+
+    // Set the waterActLicence toggle to No
+    setRadioFieldIndex('waterActLicence', 1);
+
+    // Save the application
+    clickButton('.btn.btn-success.btn-save');
+
+    //Give the page a moment to save
+    driver.sleep(waitShort);
+
+    done();
+}
+
+function addActivityDetails(done){
+    // Go to the new application page
+    driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
+    nextPage(4);
+
+    // Add a license row
+    clickButton('.btn-add-proposed-licence');
+
+    // Click the first cell in the license table
+    clickButton('.select-cell:first');
+
+    // Click the second cell in the license table to focus
+    clickButton('.select-cell:nth-child(2)');
+
+    // Click the second cell in the license table again to expand
+    clickButton('.select-cell:nth-child(2)');
+
+    // send the down arrow key to select second element
+    driver.sendKeys(driver.Key.ARROW_DOWN);
+
+    driver.sleep(10000);
 
     // Save the application
     clickButton('.btn.btn-success.btn-save');
@@ -197,6 +258,9 @@ function deleteApplication(done){
     // click the ok button
     clickButton('.modal-footer .btn-close.btn.btn-primary');
 
+    //Give the page a moment to save
+    // driver.sleep(waitShort);
+
     done();
 }
 
@@ -214,5 +278,7 @@ module.exports = {
     createApplication: createApplication,
     addApplicationInformation: addApplicationInformation,
     addProposedActivity: addProposedActivity,
+    addAdditionalInformation: addAdditionalInformation,
+    addActivityDetails: addActivityDetails,
     deleteApplication: deleteApplication
 };

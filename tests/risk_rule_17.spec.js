@@ -64,14 +64,34 @@ test.describe('Create Application', function () {
             });
         });
 
-        test.describe('proposed activity', function () {
-            test.before(function (done) {
-                OneStop.addProposedActivity(done);
-            });
+        // test.describe('proposed activity', function () {
+        //     test.before(function (done) {
+        //         OneStop.addProposedActivity(done);
+        //     });
+        //
+        //     test.it('saves without error', function () {
+        //         expect(true).to.be.true;
+        //     });
+        // })
 
-            test.it('saves without error', function () {
-                expect(true).to.be.true;
-            });
-        });
+        // test.describe('additional information', function () {
+        //     test.before(function (done) {
+        //         OneStop.addAdditionalInformation(done);
+        //     });
+        //
+        //     test.it('saves without error', function () {
+        //         expect(true).to.be.true;
+        //     });
+        // });
+
+        // test.describe('activity details', function () {
+        //     test.before(function (done) {
+        //         OneStop.addActivityDetails(done);
+        //     });
+        //
+        //     test.it('saves without error', function () {
+        //         expect(true).to.be.true;
+        //     });
+        // });
     });
 });
