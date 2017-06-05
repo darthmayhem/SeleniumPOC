@@ -33,6 +33,9 @@ function verifyUserName(driver, username, done){
             driver.wait(until.elementIsVisible(element), 1000);
             element.getText().then(function(text){
                 expect(text.indexOf(username) >= 0).to.be.true;
+
+                // small pause for screen redraw
+                driver.sleep(1000);
                 done();
             });
         });
@@ -130,16 +133,16 @@ test.describe('Internal Login', function() {
         verifyUserName(driver, 'Pipeline LeadReviewer', done);
     });
 
-    test.it('proper login for Pipeline-Reviewer user', function(done) {
-        driver.get('https://onestopuat.aer.ca/onestop/');
-
-        driver.findElement(By.name('username'))
-            .sendKeys('CBPLPR');
-        driver.findElement(By.name('password'))
-            .sendKeys('Nala@2017');
-
-        verifyUserName(driver, 'Pipeline Reviewer', done);
-    });
+    // test.it('proper login for Pipeline-Reviewer user', function(done) {
+    //     driver.get('https://onestopuat.aer.ca/onestop/');
+    //
+    //     driver.findElement(By.name('username'))
+    //         .sendKeys('CBPLPR');
+    //     driver.findElement(By.name('password'))
+    //         .sendKeys('Nala@2017');
+    //
+    //     verifyUserName(driver, 'Pipeline Reviewer', done);
+    // });
 
     test.it('proper login for Pipeline-Readonly user', function(done) {
         driver.get('https://onestopuat.aer.ca/onestop/');

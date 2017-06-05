@@ -12,7 +12,7 @@ run `npm install` to install and packages
 
 the tests can be run by one of the following:
 
-Spec results: `npm run test:spec`
+Spec results: `npm run test:all:spec`
 
-Json results: `npm run test:json`
+Json results: `npm run test:all:json`
 

@@ -3,8 +3,10 @@
   "version": "0.0.1",
   "description": "A proof of concept using selenium to automate browser testing",
   "scripts": {
-    "test:spec": "mocha --timeout 15000 --reporter spec tests/**/*.spec.js",
-    "test:json": "mocha --timeout 15000 --reporter json tests/**/*.spec.js"
+    "test:logins:spec": "mocha --timeout 15000 --reporter spec tests/logins/**/*.spec.js",
+    "test:e2e:spec": "mocha --timeout 15000 --reporter spec tests/e2e/**/*.spec.js",
+    "test:all:spec": "mocha --timeout 15000 --reporter spec tests/**/*.spec.js",
+    "test:all:json": "mocha --timeout 15000 --reporter json tests/**/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,7 @@
     "chai": "^4.0.0",
     "chromedriver": "^2.29.0",
     "mocha": "^3.4.2",
+    "moment": "^2.18.1",
     "selenium-webdriver": "^3.4.0"
   }
 }

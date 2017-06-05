@@ -4,11 +4,12 @@
 
 'use strict';
 
-var driver, By, until, applicationId;
+var webDriver, driver, By, until, applicationId;
 var waitShort = 1000;
 var waitLong = 5000;
 
-function init(driverIn, ByIn, untilIn, waitShortIn, waitLongIn){
+function init(webDriverIn, driverIn, ByIn, untilIn, waitShortIn, waitLongIn){
+    webDriver = webDriverIn;
     driver = driverIn;
     By = ByIn;
     until = untilIn;
@@ -93,37 +94,43 @@ function getElementValueByCSS(elementCSS){
     return driver.findElement(By.css(elementCSS)).getText();
 }
 
-function nextPage(pageCount){
-
-    for (var i=0; i<pageCount; i++){
-        //Give the page a moment to draw
-        driver.sleep(waitShort);
-
-        // move to the next screen
-        clickButton('.btn.btn-primary.btn-next');
-    }
-}
-
-function clickButton(buttonCss){
-    driver.wait(until.elementLocated(By.css(buttonCss)), waitLong);
-    driver.findElement(By.css(buttonCss)).then(function(element){
+function clickElement(elementCss){
+    driver.wait(until.elementLocated(By.css(elementCss)), waitLong);
+    driver.findElement(By.css(elementCss)).then(function(element){
         driver.wait(until.elementIsVisible(element), waitLong);
         element.click();
     });
 }
 
-function createApplication(done){
+function setBackGridSelect(elementCss, index, selectIndex){
+    driver.wait(until.elementLocated(By.css(elementCss)), waitLong);
+    driver.findElements(By.css(elementCss)).then(function(elements){
+        elements[index].click();
+        elements[index].findElements(By.css('option')).then(function(elements){
+            elements[selectIndex].click();
+        });
+    });
+}
+
+function clickNthElement(elementCss, index){
+    driver.wait(until.elementLocated(By.css(elementCss)), waitLong);
+    driver.findElements(By.css(elementCss)).then(function(elements){
+        elements[index].click();
+    });
+}
+
+function createApplication(done, email, primaryContact){
     // Go to the new application page
     driver.get('https://onestopuat.aer.ca/onestop/#application');
 
     // Set the applicant email
-    setTextFieldValue('applicant[email]', 'automated_test@aer.ca');
+    setTextFieldValue('applicant[email]', email);
 
     // Set the primary contact
-    setSelectFieldValue('applicant[primaryContact]', 'Yes');
+    setSelectFieldValue('applicant[primaryContact]', primaryContact);
 
     // Save the application
-    clickButton('.btn.btn-success.btn-save');
+    clickElement('.btn.btn-success.btn-save');
 
     // slight pause for page load
     driver.sleep(waitShort);
@@ -136,22 +143,33 @@ function createApplication(done){
         })
 }
 
-function addApplicationInformation(done){
+function addApplicationInformation(done, integrationChoice, newIntegrationReferenceName, existingApprovals){
     // Go to the new application page
     driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
-    nextPage(1);
+
+    //Give the page a moment to save
+    driver.sleep(waitShort);
+
+    // Click the application information nav link
+    clickElement('a[data-id="generalTab:applicationInfo"]');
+
+    // slight pause for page load
+    driver.sleep(waitShort);
 
     // Set the integrationChoice toggle to no
-    setRadioFieldIndex('integrationChoice', 1);
+    setRadioFieldIndex('integrationChoice', integrationChoice);
 
     // Set the applicant email
-    setTextFieldValue('newIntegrationReferenceName', 'Automated Test Project');
+    setTextFieldValue('newIntegrationReferenceName', newIntegrationReferenceName);
 
     // Set the existingApprovals toggle to no
-    setRadioFieldIndex('existingApprovals', 1);
+    setRadioFieldIndex('existingApprovals', existingApprovals);
+
+    // slight pause for page load
+    driver.sleep(waitShort);
 
     // Save the application
-    clickButton('.btn.btn-success.btn-save');
+    clickElement('.btn.btn-success.btn-save');
 
     //Give the page a moment to save
     driver.sleep(waitShort);
@@ -159,10 +177,15 @@ function addApplicationInformation(done){
     done();
 }
 
-function addProposedActivity(done){
+function addProposedActivity(done, privateLand, proposedPipelinesActivity, developmentType){
     // Go to the new application page
     driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
-    nextPage(2);
+
+    // Click the proposed activity nav link
+    clickElement('a[data-id="generalTab:proposedActivity"]');
+
+    // slight pause for page load
+    driver.sleep(waitShort);
 
     // Check Private Land
     setCheckbox('privateLand');
@@ -171,10 +194,13 @@ function addProposedActivity(done){
     setCheckbox('proposedPipelinesActivity');
 
     // Set the developmentType toggle to Oil and Gas
-    setRadioFieldIndex('developmentType', 2);
+    setRadioFieldIndex('developmentType', developmentType);
+
+    // slight pause for page load
+    driver.sleep(waitShort);
 
     // Save the application
-    clickButton('.btn.btn-success.btn-save');
+    clickElement('.btn.btn-success.btn-save');
 
     //Give the page a moment to save
     driver.sleep(waitShort);
@@ -182,28 +208,42 @@ function addProposedActivity(done){
     done();
 }
 
-function addAdditionalInformation(done){
+function addAdditionalInformation(
+    done,
+    stakeholderConcerns,
+    epeaApproval,
+    waterActNotificationSubmitted,
+    waterActApprovalRequired,
+    waterActLicence){
     // Go to the new application page
     driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
-    nextPage(3);
+
+    // Click the additional information nav link
+    clickElement('a[data-id="generalTab:additionalInfo"]');
+
+    // slight pause for page load
+    driver.sleep(waitShort);
 
     // Set the stakeholderConcerns toggle to No
-    setRadioFieldIndex('stakeholderConcerns', 1);
+    setRadioFieldIndex('stakeholderConcerns', stakeholderConcerns);
 
     // Set the epeaApproval toggle to No
-    setRadioFieldIndex('epeaApproval', 1);
+    setRadioFieldIndex('epeaApproval', epeaApproval);
 
     // Set the waterActNotificationSubmitted toggle to No
-    setRadioFieldIndex('waterActNotificationSubmitted', 1);
+    setRadioFieldIndex('waterActNotificationSubmitted', waterActNotificationSubmitted);
 
     // Set the waterActApprovalRequired toggle to No
-    setRadioFieldIndex('waterActApprovalRequired', 1);
+    setRadioFieldIndex('waterActApprovalRequired', waterActApprovalRequired);
 
     // Set the waterActLicence toggle to No
-    setRadioFieldIndex('waterActLicence', 1);
+    setRadioFieldIndex('waterActLicence', waterActLicence);
+
+    // slight pause for page load
+    driver.sleep(waitShort);
 
     // Save the application
-    clickButton('.btn.btn-success.btn-save');
+    clickElement('.btn.btn-success.btn-save');
 
     //Give the page a moment to save
     driver.sleep(waitShort);
@@ -214,27 +254,36 @@ function addAdditionalInformation(done){
 function addActivityDetails(done){
     // Go to the new application page
     driver.get('https://onestopuat.aer.ca/onestop/#application/'+applicationId);
-    nextPage(4);
+
+    // Click the activity details nav link
+    clickElement('a[data-id="generalTab:activityDetails"]');
+
+    // slight pause for page load
+    driver.sleep(waitShort);
 
     // Add a license row
-    clickButton('.btn-add-proposed-licence');
+    clickElement('.btn-add-proposed-licence');
 
     // Click the first cell in the license table
-    clickButton('.select-cell:first');
+    clickElement('td.select-cell.editable');
 
     // Click the second cell in the license table to focus
-    clickButton('.select-cell:nth-child(2)');
+    // clickNthElement('td.select-cell.editable', 1);
 
     // Click the second cell in the license table again to expand
-    clickButton('.select-cell:nth-child(2)');
+    setBackGridSelect('td.select-cell.editable', 1, 1);
+    // clickNthElement('td.select-cell.editable', 1);
 
     // send the down arrow key to select second element
-    driver.sendKeys(driver.Key.ARROW_DOWN);
+    // driver.sleep(10000);
+    // elementSendKey('.select-cell:nth-child(2)', driver.key(40));
+    // sendKeysNthElement('td.select-cell.editable', 1, webDriver.Key.ARROW_DOWN);
 
-    driver.sleep(10000);
+    // slight pause for page load
+    driver.sleep(waitShort);
 
     // Save the application
-    clickButton('.btn.btn-success.btn-save');
+    clickElement('.btn.btn-success.btn-save');
 
     //Give the page a moment to save
     driver.sleep(waitShort);
@@ -250,16 +299,13 @@ function deleteApplication(done){
     driver.sleep(waitShort);
 
     // click the delete draft button
-    clickButton('.btn.btn-danger.btn-delete-draft');
+    clickElement('.btn.btn-danger.btn-delete-draft');
 
     // click the yes button
-    clickButton('.modal-footer button.btn-yes.btn.btn-success');
+    clickElement('.modal-footer button.btn-yes.btn.btn-success');
 
     // click the ok button
-    clickButton('.modal-footer .btn-close.btn.btn-primary');
-
-    //Give the page a moment to save
-    // driver.sleep(waitShort);
+    clickElement('.modal-footer .btn-close.btn.btn-primary');
 
     done();
 }
@@ -269,12 +315,11 @@ module.exports = {
     setApplicationId: setApplicationId,
     getApplicationId: getApplicationId,
     login: login,
-    setTextFieldValue: setTextFieldValue,
-    setSelectFieldValue: setSelectFieldValue,
-    setRadioFieldIndex: setRadioFieldIndex,
-    setCheckbox: setCheckbox,
-    nextPage: nextPage,
-    clickButton: clickButton,
+    // setTextFieldValue: setTextFieldValue,
+    // setSelectFieldValue: setSelectFieldValue,
+    // setRadioFieldIndex: setRadioFieldIndex,
+    // setCheckbox: setCheckbox,
+    // clickElement: clickElement,
     createApplication: createApplication,
     addApplicationInformation: addApplicationInformation,
     addProposedActivity: addProposedActivity,

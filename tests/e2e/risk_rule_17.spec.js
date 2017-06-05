@@ -2,7 +2,8 @@
  * Created by cb5rp on 5/26/2017.
  */
 
-var OneStop = require('./utils/OneStopApp');
+var OneStop = require('../utils/OneStopApp');
+var Moment = require('moment');
 
 var expect = require('chai').expect,
     test = require('selenium-webdriver/testing'),
@@ -26,7 +27,7 @@ test.describe('Create Application', function () {
             .build();
         driver.manage().deleteAllCookies();
 
-        OneStop.init(driver, By, until, 2000, 5000);
+        OneStop.init(webDriver, driver, By, until, 1000, 5000);
         OneStop.login('0054Admin', 'Nala2016', done);
     });
 
@@ -36,12 +37,12 @@ test.describe('Create Application', function () {
 
     test.describe('happy path', function () {
         test.before(function (done) {
-            OneStop.createApplication(done);
+            OneStop.createApplication(done, 'automated_test@aer.ca', 'Yes');
         });
 
         test.after(function (done) {
-            OneStop.deleteApplication(done);
-            // done();
+            // OneStop.deleteApplication(done);
+            done();
         });
 
         test.describe('contact information', function () {
@@ -56,7 +57,7 @@ test.describe('Create Application', function () {
 
         test.describe('application information', function () {
             test.before(function (done) {
-                OneStop.addApplicationInformation(done);
+                OneStop.addApplicationInformation(done, 1, 'Automated Test Project: ' + Moment().toDate(), 1);
             });
 
             test.it('saves without error', function () {
@@ -64,34 +65,34 @@ test.describe('Create Application', function () {
             });
         });
 
-        // test.describe('proposed activity', function () {
-        //     test.before(function (done) {
-        //         OneStop.addProposedActivity(done);
-        //     });
-        //
-        //     test.it('saves without error', function () {
-        //         expect(true).to.be.true;
-        //     });
-        // })
+        test.describe('proposed activity', function () {
+            test.before(function (done) {
+                OneStop.addProposedActivity(done, 'privateLand', 'proposedPipelinesActivity', 2);
+            });
 
-        // test.describe('additional information', function () {
-        //     test.before(function (done) {
-        //         OneStop.addAdditionalInformation(done);
-        //     });
-        //
-        //     test.it('saves without error', function () {
-        //         expect(true).to.be.true;
-        //     });
-        // });
+            test.it('saves without error', function () {
+                expect(true).to.be.true;
+            });
+        });
 
-        // test.describe('activity details', function () {
-        //     test.before(function (done) {
-        //         OneStop.addActivityDetails(done);
-        //     });
-        //
-        //     test.it('saves without error', function () {
-        //         expect(true).to.be.true;
-        //     });
-        // });
+        test.describe('additional information', function () {
+            test.before(function (done) {
+                OneStop.addAdditionalInformation(done, 1, 1, 1, 1, 1);
+            });
+
+            test.it('saves without error', function () {
+                expect(true).to.be.true;
+            });
+        });
+
+        test.describe('activity details', function () {
+            test.before(function (done) {
+                OneStop.addActivityDetails(done);
+            });
+
+            test.it('saves without error', function () {
+                expect(true).to.be.true;
+            });
+        });
     });
 });
